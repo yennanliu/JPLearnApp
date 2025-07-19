@@ -1,0 +1,11 @@
+🧠 Prompt:
+
+Create a single-page frontend-only web app using Vue 2 framework that helps users learn Japanese through daily-use sentences. The app should:
+	1.	Display a randomly generated simple Japanese sentence (with `traditional chinese` translation) commonly used in everyday life (e.g. “おはようございます” - “早安”).
+	2.	Include a button to play the sentence audio using the browser’s SpeechSynthesis API.
+	3.	Allow the user to speak the sentence using the browser’s SpeechRecognition API and provide feedback (e.g. “Great! You said it correctly” or “Try again”).
+	4.	Not require any backend — all logic and data (like a small list of sample sentences) should be handled in the frontend.
+	5.	Be styled minimally but clearly using scoped CSS.
+	6.	All the code (HTML, CSS, JS) should be in one file (App.vue) using single-file component format for Vue 2.
+
+Please make sure it’s self-contained and doesn’t rely on external APIs or backends.
