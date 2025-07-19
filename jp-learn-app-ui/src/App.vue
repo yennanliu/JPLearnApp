@@ -3,6 +3,7 @@
     <nav class="nav-bar">
       <router-link to="/" class="nav-link">首頁</router-link>
       <router-link to="/practice" class="nav-link">練習</router-link>
+      <router-link to="/articles" class="nav-link">短文練習</router-link>
       <router-link to="/liked" class="nav-link">收藏句子</router-link>
     </nav>
     
