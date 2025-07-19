@@ -11,6 +11,12 @@ cd jp-learn-app-ui
 npm run serve
 ```
 
+## Deployment 
+
+- https://app.netlify.com/projects/jplearnapp/overview
+
+
+
 ## Project setup
 ```
 npm install
