@@ -2,40 +2,64 @@
   <div class="container">
     <h1>日語練習</h1>
     
-    <div class="category-filter">
-      <label>分類：</label>
-      <select v-model="selectedCategory">
-        <option value="">所有分類</option>
-        <option v-for="(name, key) in categories" :key="key" :value="key">
-          {{ name }}
-        </option>
-      </select>
-    </div>
+    <div class="layout">
+      <div class="sidebar">
+        <div class="category-filter">
+          <label>分類：</label>
+          <select v-model="selectedCategory" @change="handleCategoryChange">
+            <option value="">所有分類</option>
+            <option v-for="(name, key) in categories" :key="key" :value="key">
+              {{ name }}
+            </option>
+          </select>
+        </div>
 
-    <div class="sentence-card">
-      <div class="japanese" :class="{ 'speaking': isPlaying }">
-        {{ currentSentence.japanese }}
-        <span class="speaking-indicator" v-if="isPlaying">🔊</span>
+        <div class="sentences-list">
+          <h3>句子列表</h3>
+          <div class="list-container">
+            <div 
+              v-for="(sentence, index) in filteredSentences" 
+              :key="index"
+              :class="['sentence-item', { active: currentSentence === sentence }]"
+              @click="selectSentence(sentence)"
+            >
+              <div class="sentence-preview">
+                <div class="japanese-preview">{{ sentence.japanese }}</div>
+                <div class="chinese-preview">{{ sentence.chinese }}</div>
+              </div>
+              <div class="category-label">{{ categories[sentence.category] }}</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="chinese">{{ currentSentence.chinese }}</div>
-      <div class="category-tag">{{ categories[currentSentence.category] }}</div>
-      
-      <div class="controls">
-        <button @click="playAudio" :disabled="isPlaying">
-          <span v-if="!isPlaying">🔊 播放</span>
-          <span v-else>播放中...</span>
-        </button>
-        
-        <button @click="startListening" :disabled="isListening">
-          <span v-if="!isListening">🎤 說說看</span>
-          <span v-else>聆聽中...</span>
-        </button>
-        
-        <button @click="getNewSentence">↻ 下一句</button>
-      </div>
-      
-      <div class="feedback" :class="feedbackType" v-if="feedback">
-        {{ feedback }}
+
+      <div class="main-content">
+        <div class="sentence-card">
+          <div class="japanese" :class="{ 'speaking': isPlaying }">
+            {{ currentSentence.japanese }}
+            <span class="speaking-indicator" v-if="isPlaying">🔊</span>
+          </div>
+          <div class="chinese">{{ currentSentence.chinese }}</div>
+          <div class="category-tag">{{ categories[currentSentence.category] }}</div>
+          
+          <div class="controls">
+            <button @click="playAudio" :disabled="isPlaying">
+              <span v-if="!isPlaying">🔊 播放</span>
+              <span v-else>播放中...</span>
+            </button>
+            
+            <button @click="startListening" :disabled="isListening">
+              <span v-if="!isListening">🎤 說說看</span>
+              <span v-else>聆聽中...</span>
+            </button>
+            
+            <button @click="getNewSentence">↻ 下一句</button>
+          </div>
+          
+          <div class="feedback" :class="feedbackType" v-if="feedback">
+            {{ feedback }}
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -67,6 +91,16 @@ export default {
     }
   },
   methods: {
+    handleCategoryChange() {
+      // When category changes, select the first sentence from filtered list
+      if (this.filteredSentences.length > 0) {
+        this.selectSentence(this.filteredSentences[0])
+      }
+    },
+    selectSentence(sentence) {
+      this.currentSentence = sentence
+      this.feedback = ''
+    },
     getNewSentence() {
       const sentences = this.filteredSentences
       const randomIndex = Math.floor(Math.random() * sentences.length)
@@ -136,9 +170,79 @@ export default {
 
 <style scoped>
 .container {
-  max-width: 600px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+}
+
+.sidebar {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sentences-list {
+  margin-top: 20px;
+}
+
+.sentences-list h3 {
+  margin-bottom: 15px;
+  color: #2c3e50;
+}
+
+.list-container {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.sentence-item {
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #eee;
+}
+
+.sentence-item:hover {
+  background-color: #f5f5f5;
+  transform: translateX(5px);
+}
+
+.sentence-item.active {
+  background-color: #e8f5e9;
+  border-color: #4CAF50;
+}
+
+.sentence-preview {
+  margin-bottom: 8px;
+}
+
+.japanese-preview {
+  font-size: 1.1em;
+  color: #2c3e50;
+  margin-bottom: 4px;
+}
+
+.chinese-preview {
+  font-size: 0.9em;
+  color: #666;
+}
+
+.category-label {
+  font-size: 0.8em;
+  color: #4CAF50;
+}
+
+.main-content {
+  min-width: 0;
 }
 
 h1 {
@@ -148,15 +252,15 @@ h1 {
 
 .category-filter {
   margin-bottom: 20px;
-  text-align: center;
 }
 
 .category-filter select {
+  width: 100%;
   padding: 8px;
   border-radius: 4px;
   border: 1px solid #ddd;
   font-size: 1em;
-  margin-left: 10px;
+  margin-top: 5px;
 }
 
 .sentence-card {
@@ -251,5 +355,24 @@ button:disabled {
 .error {
   background-color: #f2dede;
   color: #a94442;
+}
+
+/* Scrollbar styling */
+.list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.list-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.list-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.list-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style> 
