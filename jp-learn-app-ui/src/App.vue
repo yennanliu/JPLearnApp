@@ -3,14 +3,23 @@
     <!-- Desktop Navigation -->
     <nav class="nav-bar desktop-nav">
       <div class="nav-container">
-        <router-link to="/" class="nav-link">首頁</router-link>
-        <router-link to="/practice" class="nav-link">練習</router-link>
-        <router-link to="/articles" class="nav-link">短文練習</router-link>
-        <router-link to="/liked" class="nav-link">收藏句子</router-link>
+        <div class="nav-left">
+          <router-link to="/" class="logo">
+            <img src="@/assets/logo.png" alt="Logo" class="logo-img">
+            <span class="app-name">JP Learn</span>
+          </router-link>
+        </div>
+        
+        <div class="nav-links">
+          <router-link to="/" class="nav-link">首頁</router-link>
+          <router-link to="/practice" class="nav-link">練習</router-link>
+          <router-link to="/articles" class="nav-link">短文練習</router-link>
+          <router-link to="/liked" class="nav-link">收藏句子</router-link>
+        </div>
       </div>
     </nav>
     
-    <!-- Mobile Bottom Navigation -->
+    <!-- Mobile Navigation -->
     <nav class="mobile-nav">
       <router-link to="/" class="mobile-nav-item">
         <span class="nav-icon">🏠</span>
@@ -53,15 +62,15 @@ export default {
 body {
   margin: 0;
   padding: 0;
-  background-color: #f5f5f5;
+  background-color: #ffffff;
   min-height: 100vh;
 }
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
+  color: #333333;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -70,39 +79,70 @@ body {
 /* Content wrapper */
 .content-wrapper {
   flex: 1;
-  padding-bottom: 70px; /* Space for mobile navigation */
+  padding-bottom: 70px;
+  background-color: #f7f7f7;
 }
 
 /* Desktop Navigation */
 .nav-bar {
-  background-color: #4CAF50;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e8e8e8;
   padding: 0;
-  margin-bottom: 30px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 15px 20px;
+  padding: 12px 20px;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-left .logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo-img {
+  height: 40px;
+  width: auto;
+  margin-right: 10px;
+}
+
+.app-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: #FF9933;
+}
+
+.nav-links {
+  display: flex;
   gap: 20px;
+  align-items: center;
 }
 
 .nav-link {
-  color: white;
   text-decoration: none;
-  padding: 10px 20px;
-  border-radius: 4px;
-  transition: background-color 0.3s;
+  color: #666666;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: all 0.2s;
 }
 
 .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  color: #FF9933;
+  background-color: #fff1e6;
 }
 
-.router-link-active {
-  background-color: rgba(255, 255, 255, 0.2);
+.nav-link.router-link-active {
+  color: #FF9933;
+  background-color: #fff1e6;
 }
 
 /* Mobile Navigation */
@@ -114,7 +154,7 @@ body {
   right: 0;
   background-color: white;
   box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-  padding: 10px 0 env(safe-area-inset-bottom, 0);
+  padding: 10px 0;
   z-index: 1000;
 }
 
@@ -130,8 +170,7 @@ body {
 }
 
 .mobile-nav-item.router-link-active {
-  color: #4CAF50;
-  background: none;
+  color: #FF9933;
 }
 
 .nav-icon {
@@ -157,6 +196,10 @@ body {
   .content-wrapper {
     padding-bottom: calc(70px + env(safe-area-inset-bottom, 0));
   }
+  
+  .nav-container {
+    padding: 10px 15px;
+  }
 }
 
 /* Container for all pages */
@@ -165,35 +208,6 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-}
-
-/* Responsive typography */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 1.8em;
-  }
-  h2 {
-    font-size: 1.5em;
-  }
-  h3 {
-    font-size: 1.2em;
-  }
-}
-
-@media (max-width: 480px) {
-  h1 {
-    font-size: 1.5em;
-  }
-  h2 {
-    font-size: 1.3em;
-  }
-  h3 {
-    font-size: 1.1em;
-  }
-  
-  .container {
-    padding: 15px;
-  }
 }
 
 /* Safe area support for iOS devices */
