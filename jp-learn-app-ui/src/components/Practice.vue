@@ -198,8 +198,20 @@ export default {
       }
     }
 
-    // Get initial sentence
-    this.getNewSentence()
+    // Check if we should load a specific sentence
+    const targetSentence = this.$route.query.sentence
+    if (targetSentence) {
+      const sentence = this.sentences.find(s => s.japanese === targetSentence)
+      if (sentence) {
+        this.currentSentence = sentence
+        this.selectedCategory = sentence.category
+      } else {
+        this.getNewSentence()
+      }
+    } else {
+      // Get initial sentence
+      this.getNewSentence()
+    }
   }
 }
 </script>
