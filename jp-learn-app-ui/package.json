@@ -32,7 +32,10 @@
     "parserOptions": {
       "parser": "@babel/eslint-parser"
     },
-    "rules": {}
+    "rules": {},
+    "globals": {
+      "webkitSpeechRecognition": "readonly"
+    }
   },
   "browserslist": [
     "> 1%",
