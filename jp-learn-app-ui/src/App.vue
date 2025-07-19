@@ -1,260 +1,55 @@
 <template>
-  <div class="container">
-    <h1>Japanese Learning App</h1>
+  <div id="app">
+    <nav class="nav-bar">
+      <router-link to="/" class="nav-link">首頁</router-link>
+      <router-link to="/practice" class="nav-link">練習</router-link>
+    </nav>
     
-    <div class="category-filter">
-      <label>Category: </label>
-      <select v-model="selectedCategory">
-        <option value="">All Categories</option>
-        <option v-for="category in categories" :key="category" :value="category">
-          {{ formatCategory(category) }}
-        </option>
-      </select>
-    </div>
-
-    <div class="sentence-card">
-      <div class="japanese" :class="{ 'speaking': isPlaying }">
-        {{ currentSentence.japanese }}
-        <span class="speaking-indicator" v-if="isPlaying">🔊</span>
-      </div>
-      <div class="chinese">{{ currentSentence.chinese }}</div>
-      <div class="category-tag">{{ formatCategory(currentSentence.category) }}</div>
-      
-      <div class="controls">
-        <button @click="playAudio" :disabled="isPlaying">
-          <span v-if="!isPlaying">🔊 Play</span>
-          <span v-else>Playing...</span>
-        </button>
-        
-        <button @click="startListening" :disabled="isListening">
-          <span v-if="!isListening">🎤 Speak</span>
-          <span v-else>Listening...</span>
-        </button>
-        
-        <button @click="getNewSentence">↻ Next Sentence</button>
-      </div>
-      
-      <div class="feedback" :class="feedbackType" v-if="feedback">
-        {{ feedback }}
-      </div>
-    </div>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import sentencesData from './assets/sentences.json'
-
 export default {
-  name: 'App',
-  data() {
-    return {
-      sentences: sentencesData.sentences,
-      currentSentence: null,
-      selectedCategory: '',
-      isPlaying: false,
-      isListening: false,
-      feedback: '',
-      feedbackType: '',
-      recognition: null,
-      synthesis: window.speechSynthesis
-    }
-  },
-  computed: {
-    categories() {
-      return [...new Set(this.sentences.map(s => s.category))].sort()
-    },
-    filteredSentences() {
-      if (!this.selectedCategory) return this.sentences
-      return this.sentences.filter(s => s.category === this.selectedCategory)
-    }
-  },
-  methods: {
-    formatCategory(category) {
-      return category.charAt(0).toUpperCase() + category.slice(1)
-    },
-    getNewSentence() {
-      const sentences = this.filteredSentences
-      const randomIndex = Math.floor(Math.random() * sentences.length)
-      this.currentSentence = sentences[randomIndex]
-      this.feedback = ''
-    },
-    playAudio() {
-      if (this.synthesis.speaking) {
-        this.synthesis.cancel()
-      }
-
-      this.isPlaying = true
-      const utterance = new SpeechSynthesisUtterance(this.currentSentence.japanese)
-      utterance.lang = 'ja-JP'
-      
-      utterance.onend = () => {
-        this.isPlaying = false
-      }
-
-      this.synthesis.speak(utterance)
-    },
-    startListening() {
-      if (!this.recognition) {
-        this.feedback = 'Speech recognition is not supported in your browser'
-        this.feedbackType = 'error'
-        return
-      }
-
-      this.feedback = ''
-      this.isListening = true
-      this.recognition.start()
-    },
-    checkPronunciation(spokenText) {
-      if (spokenText.toLowerCase() === this.currentSentence.japanese.toLowerCase()) {
-        this.feedback = '素晴らしい！ (Wonderful!) Correct pronunciation!'
-        this.feedbackType = 'success'
-      } else {
-        this.feedback = 'Try again! Keep practicing!'
-        this.feedbackType = 'error'
-      }
-    }
-  },
-  created() {
-    // Initialize speech recognition if supported
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    if (SpeechRecognition) {
-      this.recognition = new SpeechRecognition()
-      this.recognition.lang = 'ja-JP'
-      this.recognition.continuous = false
-      this.recognition.interimResults = false
-
-      this.recognition.onresult = (event) => {
-        const result = event.results[0][0].transcript
-        this.checkPronunciation(result)
-      }
-
-      this.recognition.onend = () => {
-        this.isListening = false
-      }
-    }
-
-    // Get initial sentence
-    this.getNewSentence()
-  }
+  name: 'App'
 }
 </script>
 
-<style scoped>
-.container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-}
-
-h1 {
+<style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  margin-bottom: 30px;
 }
 
-.category-filter {
-  margin-bottom: 20px;
+.nav-bar {
+  background-color: #4CAF50;
+  padding: 15px;
+  margin-bottom: 30px;
   text-align: center;
 }
 
-.category-filter select {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  font-size: 1em;
-  margin-left: 10px;
-}
-
-.sentence-card {
-  background: white;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-}
-
-.japanese {
-  font-size: 2em;
-  margin-bottom: 10px;
-  color: #2c3e50;
-  transition: color 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.japanese.speaking {
-  color: #4CAF50;
-  text-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
-}
-
-.speaking-indicator {
-  animation: pulse 1s infinite;
-  font-size: 0.8em;
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.7; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.chinese {
-  font-size: 1.5em;
-  color: #666;
-  margin-bottom: 10px;
-}
-
-.category-tag {
-  display: inline-block;
-  padding: 4px 8px;
-  background-color: #e8f5e9;
-  color: #4CAF50;
-  border-radius: 4px;
-  font-size: 0.9em;
-  margin-bottom: 20px;
-}
-
-.controls {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-button {
-  background-color: #4CAF50;
+.nav-link {
   color: white;
-  border: none;
+  text-decoration: none;
   padding: 10px 20px;
+  margin: 0 10px;
   border-radius: 4px;
-  cursor: pointer;
-  font-size: 1em;
   transition: background-color 0.3s;
 }
 
-button:hover {
-  background-color: #45a049;
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
+.router-link-active {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
-.feedback {
-  margin-top: 20px;
-  padding: 10px;
-  border-radius: 4px;
-  font-weight: bold;
-}
-
-.success {
-  background-color: #dff0d8;
-  color: #3c763d;
-}
-
-.error {
-  background-color: #f2dede;
-  color: #a94442;
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
 }
 </style>

@@ -1,4 +1,20 @@
 {
+  "categories": {
+    "greetings": "問候",
+    "gratitude": "感謝",
+    "dining": "用餐",
+    "farewell": "告別",
+    "work": "工作",
+    "apology": "道歉",
+    "formal": "正式場合",
+    "questions": "提問",
+    "confirmation": "確認",
+    "requests": "請求",
+    "celebrations": "慶祝",
+    "encouragement": "鼓勵",
+    "daily": "日常生活",
+    "well-wishes": "祝福"
+  },
   "sentences": [
     { "japanese": "おはようございます", "chinese": "早安", "category": "greetings" },
     { "japanese": "こんにちは", "chinese": "你好", "category": "greetings" },
