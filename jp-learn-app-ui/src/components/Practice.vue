@@ -229,11 +229,57 @@ export default {
   gap: 20px;
 }
 
+/* Responsive layout */
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 250px 1fr;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: 2;
+  }
+
+  .main-content {
+    order: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .japanese {
+    font-size: 1.6em;
+  }
+
+  .chinese {
+    font-size: 1.2em;
+  }
+
+  .controls {
+    flex-wrap: wrap;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
 .sidebar {
   background: white;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  height: fit-content;
 }
 
 .sentences-list {
@@ -248,6 +294,12 @@ export default {
 .list-container {
   max-height: 600px;
   overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .list-container {
+    max-height: 300px;
+  }
 }
 
 .sentence-item {
@@ -266,13 +318,18 @@ export default {
   transform: translateX(5px);
 }
 
+@media (max-width: 768px) {
+  .sentence-item:hover {
+    transform: none;
+  }
+}
+
 .sentence-item.active {
   background-color: #e8f5e9;
   border-color: #4CAF50;
 }
 
 .sentence-preview {
-  margin-bottom: 8px;
   flex-grow: 1;
 }
 
@@ -330,6 +387,8 @@ h1 {
   align-items: center;
   justify-content: center;
   gap: 10px;
+  text-align: center;
+  line-height: 1.4;
 }
 
 .japanese.speaking {
@@ -352,6 +411,8 @@ h1 {
   font-size: 1.5em;
   color: #666;
   margin-bottom: 10px;
+  text-align: center;
+  line-height: 1.4;
 }
 
 .category-tag {
@@ -361,7 +422,7 @@ h1 {
   color: #4CAF50;
   border-radius: 4px;
   font-size: 0.9em;
-  margin-bottom: 0;
+  margin-bottom: 20px;
 }
 
 .controls {
@@ -379,16 +440,19 @@ button {
   border-radius: 4px;
   cursor: pointer;
   font-size: 1em;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 button:hover {
   background-color: #45a049;
+  transform: translateY(-1px);
 }
 
 button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+  transform: none;
 }
 
 .feedback {
@@ -396,6 +460,7 @@ button:disabled {
   padding: 10px;
   border-radius: 4px;
   font-weight: bold;
+  text-align: center;
 }
 
 .success {
@@ -465,5 +530,24 @@ button:disabled {
 
 .list-container::-webkit-scrollbar-thumb:hover {
   background: #555;
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .sentence-item:hover {
+    transform: none;
+  }
+
+  button:hover {
+    transform: none;
+  }
+
+  .sentence-item {
+    padding: 20px 15px;
+  }
+
+  button {
+    padding: 15px 20px;
+  }
 }
 </style> 

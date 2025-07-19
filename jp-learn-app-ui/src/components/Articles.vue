@@ -263,11 +263,61 @@ export default {
   gap: 20px;
 }
 
+/* Responsive layout */
+@media (max-width: 1024px) {
+  .layout {
+    grid-template-columns: 250px 1fr;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    order: 2;
+  }
+
+  .main-content {
+    order: 1;
+  }
+
+  .container {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+  }
+
+  .japanese-line {
+    font-size: 1.3em;
+  }
+
+  .chinese-line {
+    font-size: 1.1em;
+  }
+
+  .controls {
+    flex-wrap: wrap;
+  }
+
+  button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
 .sidebar {
   background: white;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  height: fit-content;
 }
 
 .articles-list {
@@ -284,6 +334,12 @@ export default {
   overflow-y: auto;
 }
 
+@media (max-width: 768px) {
+  .list-container {
+    max-height: 300px;
+  }
+}
+
 .article-item {
   padding: 15px;
   border-radius: 4px;
@@ -296,6 +352,12 @@ export default {
 .article-item:hover {
   background-color: #f5f5f5;
   transform: translateX(5px);
+}
+
+@media (max-width: 768px) {
+  .article-item:hover {
+    transform: none;
+  }
 }
 
 .article-item.active {
@@ -338,6 +400,20 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .like-btn {
+    width: 100%;
+    text-align: center;
+  }
 }
 
 .article-content {
@@ -388,16 +464,19 @@ button {
   border-radius: 4px;
   cursor: pointer;
   font-size: 1em;
-  transition: background-color 0.3s;
+  transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 button:hover {
   background-color: #45a049;
+  transform: translateY(-1px);
 }
 
 button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
+  transform: none;
 }
 
 .like-btn {
@@ -422,6 +501,7 @@ button:disabled {
   padding: 10px;
   border-radius: 4px;
   font-weight: bold;
+  text-align: center;
 }
 
 .success {
@@ -445,6 +525,25 @@ button:disabled {
   border: 1px solid #ddd;
   font-size: 1em;
   margin-top: 5px;
+}
+
+/* Touch device optimizations */
+@media (hover: none) {
+  .article-item:hover {
+    transform: none;
+  }
+
+  button:hover {
+    transform: none;
+  }
+
+  .article-item {
+    padding: 20px 15px;
+  }
+
+  button {
+    padding: 15px 20px;
+  }
 }
 
 /* Scrollbar styling */
