@@ -2,9 +2,23 @@
   <div class="container">
     <h1>Japanese Learning App</h1>
     
+    <div class="category-filter">
+      <label>Category: </label>
+      <select v-model="selectedCategory">
+        <option value="">All Categories</option>
+        <option v-for="category in categories" :key="category" :value="category">
+          {{ formatCategory(category) }}
+        </option>
+      </select>
+    </div>
+
     <div class="sentence-card">
-      <div class="japanese">{{ currentSentence.japanese }}</div>
+      <div class="japanese" :class="{ 'speaking': isPlaying }">
+        {{ currentSentence.japanese }}
+        <span class="speaking-indicator" v-if="isPlaying">🔊</span>
+      </div>
       <div class="chinese">{{ currentSentence.chinese }}</div>
+      <div class="category-tag">{{ formatCategory(currentSentence.category) }}</div>
       
       <div class="controls">
         <button @click="playAudio" :disabled="isPlaying">
@@ -28,24 +42,15 @@
 </template>
 
 <script>
+import sentencesData from './assets/sentences.json'
+
 export default {
   name: 'App',
   data() {
     return {
-      // Sample sentences data
-      sentences: [
-        { japanese: 'おはようございます', chinese: '早安' },
-        { japanese: 'こんにちは', chinese: '你好' },
-        { japanese: 'ありがとうございます', chinese: '謝謝' },
-        { japanese: 'いただきます', chinese: '我開動了' },
-        { japanese: 'お元気ですか', chinese: '你好嗎' },
-        { japanese: 'さようなら', chinese: '再見' },
-        { japanese: 'お疲れ様です', chinese: '辛苦了' },
-        { japanese: 'すみません', chinese: '對不起' },
-        { japanese: 'よろしくお願いします', chinese: '請多指教' },
-        { japanese: 'おやすみなさい', chinese: '晚安' }
-      ],
+      sentences: sentencesData.sentences,
       currentSentence: null,
+      selectedCategory: '',
       isPlaying: false,
       isListening: false,
       feedback: '',
@@ -54,32 +59,23 @@ export default {
       synthesis: window.speechSynthesis
     }
   },
-  created() {
-    // Initialize speech recognition if supported
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
-    if (SpeechRecognition) {
-      this.recognition = new SpeechRecognition()
-      this.recognition.lang = 'ja-JP'
-      this.recognition.continuous = false
-      this.recognition.interimResults = false
-
-      this.recognition.onresult = (event) => {
-        const result = event.results[0][0].transcript
-        this.checkPronunciation(result)
-      }
-
-      this.recognition.onend = () => {
-        this.isListening = false
-      }
+  computed: {
+    categories() {
+      return [...new Set(this.sentences.map(s => s.category))].sort()
+    },
+    filteredSentences() {
+      if (!this.selectedCategory) return this.sentences
+      return this.sentences.filter(s => s.category === this.selectedCategory)
     }
-
-    // Get initial sentence
-    this.getNewSentence()
   },
   methods: {
+    formatCategory(category) {
+      return category.charAt(0).toUpperCase() + category.slice(1)
+    },
     getNewSentence() {
-      const randomIndex = Math.floor(Math.random() * this.sentences.length)
-      this.currentSentence = this.sentences[randomIndex]
+      const sentences = this.filteredSentences
+      const randomIndex = Math.floor(Math.random() * sentences.length)
+      this.currentSentence = sentences[randomIndex]
       this.feedback = ''
     },
     playAudio() {
@@ -109,7 +105,6 @@ export default {
       this.recognition.start()
     },
     checkPronunciation(spokenText) {
-      // Simple string comparison (can be enhanced with more sophisticated matching)
       if (spokenText.toLowerCase() === this.currentSentence.japanese.toLowerCase()) {
         this.feedback = '素晴らしい！ (Wonderful!) Correct pronunciation!'
         this.feedbackType = 'success'
@@ -118,6 +113,28 @@ export default {
         this.feedbackType = 'error'
       }
     }
+  },
+  created() {
+    // Initialize speech recognition if supported
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+    if (SpeechRecognition) {
+      this.recognition = new SpeechRecognition()
+      this.recognition.lang = 'ja-JP'
+      this.recognition.continuous = false
+      this.recognition.interimResults = false
+
+      this.recognition.onresult = (event) => {
+        const result = event.results[0][0].transcript
+        this.checkPronunciation(result)
+      }
+
+      this.recognition.onend = () => {
+        this.isListening = false
+      }
+    }
+
+    // Get initial sentence
+    this.getNewSentence()
   }
 }
 </script>
@@ -134,6 +151,19 @@ h1 {
   margin-bottom: 30px;
 }
 
+.category-filter {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.category-filter select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-size: 1em;
+  margin-left: 10px;
+}
+
 .sentence-card {
   background: white;
   border-radius: 8px;
@@ -145,11 +175,42 @@ h1 {
   font-size: 2em;
   margin-bottom: 10px;
   color: #2c3e50;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.japanese.speaking {
+  color: #4CAF50;
+  text-shadow: 0 0 5px rgba(76, 175, 80, 0.2);
+}
+
+.speaking-indicator {
+  animation: pulse 1s infinite;
+  font-size: 0.8em;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .chinese {
   font-size: 1.5em;
   color: #666;
+  margin-bottom: 10px;
+}
+
+.category-tag {
+  display: inline-block;
+  padding: 4px 8px;
+  background-color: #e8f5e9;
+  color: #4CAF50;
+  border-radius: 4px;
+  font-size: 0.9em;
   margin-bottom: 20px;
 }
 
