@@ -1,32 +1,44 @@
 <template>
   <div id="app">
-    <nav class="nav-bar">
+    <!-- Desktop Navigation -->
+    <nav class="nav-bar desktop-nav">
       <div class="nav-container">
-        <button class="menu-toggle" @click="isMenuOpen = !isMenuOpen">
-          <span class="menu-icon"></span>
-        </button>
-        
-        <div class="nav-links" :class="{ 'open': isMenuOpen }">
-          <router-link to="/" class="nav-link" @click="isMenuOpen = false">首頁</router-link>
-          <router-link to="/practice" class="nav-link" @click="isMenuOpen = false">練習</router-link>
-          <router-link to="/articles" class="nav-link" @click="isMenuOpen = false">短文練習</router-link>
-          <router-link to="/liked" class="nav-link" @click="isMenuOpen = false">收藏句子</router-link>
-        </div>
+        <router-link to="/" class="nav-link">首頁</router-link>
+        <router-link to="/practice" class="nav-link">練習</router-link>
+        <router-link to="/articles" class="nav-link">短文練習</router-link>
+        <router-link to="/liked" class="nav-link">收藏句子</router-link>
       </div>
     </nav>
     
-    <router-view></router-view>
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+      <router-link to="/" class="mobile-nav-item">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-text">首頁</span>
+      </router-link>
+      <router-link to="/practice" class="mobile-nav-item">
+        <span class="nav-icon">✏️</span>
+        <span class="nav-text">練習</span>
+      </router-link>
+      <router-link to="/articles" class="mobile-nav-item">
+        <span class="nav-icon">📝</span>
+        <span class="nav-text">短文</span>
+      </router-link>
+      <router-link to="/liked" class="mobile-nav-item">
+        <span class="nav-icon">❤️</span>
+        <span class="nav-text">收藏</span>
+      </router-link>
+    </nav>
+    
+    <div class="content-wrapper">
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App',
-  data() {
-    return {
-      isMenuOpen: false
-    }
-  }
+  name: 'App'
 }
 </script>
 
@@ -50,9 +62,18 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Navigation styles */
+/* Content wrapper */
+.content-wrapper {
+  flex: 1;
+  padding-bottom: 70px; /* Space for mobile navigation */
+}
+
+/* Desktop Navigation */
 .nav-bar {
   background-color: #4CAF50;
   padding: 0;
@@ -62,22 +83,16 @@ body {
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
-  position: relative;
-}
-
-.nav-links {
+  padding: 15px 20px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  padding: 15px 0;
+  gap: 20px;
 }
 
 .nav-link {
   color: white;
   text-decoration: none;
   padding: 10px 20px;
-  margin: 0 10px;
   border-radius: 4px;
   transition: background-color 0.3s;
 }
@@ -90,94 +105,66 @@ body {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-.menu-toggle {
+/* Mobile Navigation */
+.mobile-nav {
   display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px 0 env(safe-area-inset-bottom, 0);
+  z-index: 1000;
+}
+
+.mobile-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #666;
+  padding: 8px 0;
+  width: 25%;
+  transition: color 0.3s;
+}
+
+.mobile-nav-item.router-link-active {
+  color: #4CAF50;
   background: none;
-  border: none;
-  cursor: pointer;
-  padding: 15px;
-  position: absolute;
-  right: 20px;
-  top: 10px;
 }
 
-.menu-icon {
-  display: block;
-  width: 25px;
-  height: 2px;
-  background-color: white;
-  position: relative;
-  transition: background-color 0.3s;
+.nav-icon {
+  font-size: 1.5em;
+  margin-bottom: 4px;
 }
 
-.menu-icon::before,
-.menu-icon::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 2px;
-  background-color: white;
-  transition: transform 0.3s;
-}
-
-.menu-icon::before {
-  top: -8px;
-}
-
-.menu-icon::after {
-  bottom: -8px;
+.nav-text {
+  font-size: 0.8em;
 }
 
 /* Responsive styles */
 @media (max-width: 768px) {
-  .menu-toggle {
-    display: block;
-  }
-
-  .nav-links {
+  .desktop-nav {
     display: none;
-    flex-direction: column;
-    padding: 0;
-    overflow: hidden;
   }
 
-  .nav-links.open {
+  .mobile-nav {
     display: flex;
+    justify-content: space-around;
   }
 
-  .nav-link {
-    width: 100%;
-    margin: 0;
-    padding: 15px 20px;
-    text-align: center;
-    border-radius: 0;
-  }
-
-  .menu-toggle[aria-expanded="true"] .menu-icon {
-    background-color: transparent;
-  }
-
-  .menu-toggle[aria-expanded="true"] .menu-icon::before {
-    transform: translateY(8px) rotate(45deg);
-  }
-
-  .menu-toggle[aria-expanded="true"] .menu-icon::after {
-    transform: translateY(-8px) rotate(-45deg);
+  .content-wrapper {
+    padding-bottom: calc(70px + env(safe-area-inset-bottom, 0));
   }
 }
 
-/* Responsive container for all pages */
+/* Container for all pages */
 .container {
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-}
-
-/* Responsive grid system */
-.grid {
-  display: grid;
-  gap: 20px;
 }
 
 /* Responsive typography */
@@ -203,24 +190,20 @@ body {
   h3 {
     font-size: 1.1em;
   }
-}
-
-/* Responsive spacing */
-@media (max-width: 768px) {
+  
   .container {
     padding: 15px;
   }
-  .grid {
-    gap: 15px;
-  }
 }
 
-@media (max-width: 480px) {
-  .container {
-    padding: 10px;
+/* Safe area support for iOS devices */
+@supports (padding: max(0px)) {
+  .mobile-nav {
+    padding-bottom: max(env(safe-area-inset-bottom, 0), 10px);
   }
-  .grid {
-    gap: 10px;
+  
+  .content-wrapper {
+    padding-bottom: max(calc(70px + env(safe-area-inset-bottom, 0)), 70px);
   }
 }
 </style>
